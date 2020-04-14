@@ -18,6 +18,13 @@ class CreateTransactionService {
     if (type !== 'income' && type !== 'outcome')
       throw Error('Transaction type not allowed');
 
+    if (type === 'outcome') {
+      const { total: balanceTotal } = this.transactionsRepository.getBalance();
+
+      if (value > balanceTotal)
+        throw Error('The outcome is greater than the balance total');
+    }
+
     const transaction = this.transactionsRepository.create({
       title,
       value,
